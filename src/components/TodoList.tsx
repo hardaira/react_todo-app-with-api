@@ -32,10 +32,12 @@ export const TodoList: React.FC<Props> = ({
   const handleBlur = (e: React.FocusEvent<HTMLInputElement>, todo: Todo) => {
     e.preventDefault();
     const newTitle = e.target.value.trim();
+
     if (newTitle !== todo.title) {
       handleTitleChange(todo.id, newTitle);
     }
   };
+
   return (
     <div>
       {todos.map(todo => (
