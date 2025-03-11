@@ -32,40 +32,43 @@ export const TodoList: React.FC<Props> = ({
   const handleBlur = (e: React.FocusEvent<HTMLInputElement>, todo: Todo) => {
     e.preventDefault();
     const newTitle = e.target.value.trim();
-
-    if (newTitle !== todo.title) {
-      handleTitleChange(todo.id, newTitle);
-    }
+    handleTitleChange(todo.id, newTitle);
   };
 
   return (
     <div>
-      {todos.map(todo => (
+      {todos.map(({ id, title, completed, isSubmitting }) => (
         <div
           data-cy="Todo"
-          className={todo.completed ? 'todo completed' : 'todo'}
-          key={todo.id}
+          className={classNames('todo',{'completed' : completed ,})}
+          key={id}
         >
-          <label htmlFor={`todo-${todo.id}`} className="todo__status-label">
+          <label htmlFor={`todo-${id}`} className="todo__status-label">
             <input
-              id={`todo-${todo.id}`}
+              id={`todo-${id}`}
               data-cy="TodoStatus"
               type="checkbox"
               className="todo__status"
-              checked={todo.completed} // Make each checkbox reflect the completed state of the todo
-              onChange={() => handleCheckedChange(todo.id)}
+              checked={completed}
+              onChange={() => handleCheckedChange(id)}
             />
           </label>
 
-          {isEdited && todo.id === selectedTodoId ? (
-            <form onSubmit={e => submitChangedTitle(e, todo)}>
+          {isEdited && id === selectedTodoId ? (
+            <form
+              onSubmit={e =>
+                submitChangedTitle(e, { id, title, completed, isSubmitting })
+              }
+            >
               <input
                 data-cy="TodoTitleField"
                 type="text"
                 className="todo__title-field"
                 placeholder="Empty todo will be deleted"
-                defaultValue={todo.title} // Display the current title in the input field
-                onBlur={e => handleBlur(e, todo)}
+                defaultValue={title}
+                onBlur={e =>
+                  handleBlur(e, { id, title, completed, isSubmitting })
+                }
                 onKeyUp={e => {
                   if (e.key === 'Escape') {
                     setIsEdited(false);
@@ -80,32 +83,29 @@ export const TodoList: React.FC<Props> = ({
               className="todo__title"
               onDoubleClick={() => {
                 setIsEdited(true);
-                setSelectedTodoId(todo.id);
+                setSelectedTodoId(id);
               }}
             >
-              {todo.title}
+              {title}
             </span>
           )}
 
-          {/* Remove button appears only on hover */}
           {!isEdited && (
             <button
               type="button"
               className="todo__remove"
               data-cy="TodoDelete"
-              onClick={() => deleteThisTodo(todo.id)}
-              disabled={todo.isSubmitting}
+              onClick={() => deleteThisTodo(id)}
+              disabled={isSubmitting}
             >
               ×
             </button>
           )}
 
-          {/* overlay will cover the todo while it is being deleted or updated */}
-
           <div
             data-cy="TodoLoader"
             className={classNames('modal overlay', {
-              'is-active': todo.isSubmitting,
+              'is-active': isSubmitting,
             })}
           >
             <div className="modal-background has-background-white-ter" />
