@@ -6,7 +6,7 @@ type Props = {
   handleTickPressed: () => void;
   query: string;
   handleQueryChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
-  inputRef: React.RefObject<HTMLInputElement>; 
+  inputRef: React.RefObject<HTMLInputElement>;
   addTodo: (event: React.FormEvent) => void;
 };
 

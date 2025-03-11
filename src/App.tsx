@@ -40,7 +40,7 @@ export const App: React.FC = () => {
   };
 
   const handleTickPressed = () => {
-    const allCompleted = !tickPressed; 
+    const allCompleted = !tickPressed;
 
     const updatedTodos = todos.map(todo => ({
       ...todo,
@@ -72,7 +72,6 @@ export const App: React.FC = () => {
   };
 
   const handleCheckedChange = (todoId: number) => {
-
     const todo = todos.find(t => t.id === todoId);
 
     if (!todo) {
@@ -87,20 +86,21 @@ export const App: React.FC = () => {
       ),
     );
 
-    updateTodo(updatedTodo).catch(() => {
-      setErrorMessage('Unable to update a todo');
-      setTimeout(() => {
-        setErrorMessage('');
-      }, 3000);
-    })
-    .finally(() => {
+    updateTodo(updatedTodo)
+      .catch(() => {
+        setErrorMessage('Unable to update a todo');
+        setTimeout(() => {
+          setErrorMessage('');
+        }, 3000);
+      })
+      .finally(() => {
         setTodos(currentTodos =>
           currentTodos.map(t =>
             t.id === todoId ? { ...updatedTodo, isSubmitting: false } : t,
           ),
         );
       });
-  }
+  };
 
   const deleteThisTodo = (todoId: number) => {
     setTodos(currentTodos =>
@@ -111,13 +111,11 @@ export const App: React.FC = () => {
 
     return deleteTodo(todoId)
       .then(() => {
-
         setTodos(currentTodos =>
           currentTodos.filter(todo => todo.id !== todoId),
         );
       })
       .catch(() => {
-
         setTodos(currentTodos =>
           currentTodos.map(todo =>
             todo.id === todoId ? { ...todo, isSubmitting: false } : todo,
@@ -127,16 +125,14 @@ export const App: React.FC = () => {
         setTimeout(() => {
           setErrorMessage('');
         }, 3000);
-
       })
       .finally(() => {
         setIsSubmitting(false);
         inputRef.current?.focus();
       });
-  }
+  };
 
   const handleTitleChange = (todoId: number, newTitle: string) => {
-
     const todo = todos.find(t => t.id === todoId);
 
     if (!todo) {
@@ -151,6 +147,7 @@ export const App: React.FC = () => {
 
     if (todo.title === newTitle.trim()) {
       setIsEdited(false);
+
       return;
     }
 
@@ -189,8 +186,8 @@ export const App: React.FC = () => {
   const submitChangedTitle = (e, todo) => {
     e.preventDefault();
     const newTitle = e.target[0].value.trim();
-      handleTitleChange(todo.id, newTitle);
 
+    handleTitleChange(todo.id, newTitle);
   };
 
   const addTodo = (event: React.FormEvent) => {
@@ -236,7 +233,7 @@ export const App: React.FC = () => {
         inputRef.current?.focus();
         setIsSubmitting(false);
       });
-  }
+  };
 
   const handleStatusChange = (value: TodoStatus) => {
     setStatus(value);

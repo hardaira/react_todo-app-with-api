@@ -43,19 +43,17 @@ export const TodoFilter: React.FC<Props> = ({
       </span>
 
       <nav className="filter" data-cy="Filter">
-
         {Object.values(TodoStatus).map(statusOption => (
           <a
             key={statusOption}
-            href={`#/${statusOption.toLowerCase()}`} 
+            href={`#/${statusOption.toLowerCase()}`}
             className={classNames('filter__link', {
               selected: status === statusOption,
             })}
             data-cy={`FilterLink${statusOption}`}
             onClick={e => handleClick(e, statusOption)}
           >
-            {statusOption.charAt(0).toUpperCase() +
-              statusOption.slice(1).toLowerCase()}
+            {statusOption}
           </a>
         ))}
       </nav>

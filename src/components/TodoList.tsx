@@ -32,6 +32,7 @@ export const TodoList: React.FC<Props> = ({
   const handleBlur = (e: React.FocusEvent<HTMLInputElement>, todo: Todo) => {
     e.preventDefault();
     const newTitle = e.target.value.trim();
+
     handleTitleChange(todo.id, newTitle);
   };
 
@@ -40,7 +41,7 @@ export const TodoList: React.FC<Props> = ({
       {todos.map(({ id, title, completed, isSubmitting }) => (
         <div
           data-cy="Todo"
-          className={classNames('todo',{'completed' : completed ,})}
+          className={classNames('todo', { completed: completed })}
           key={id}
         >
           <label htmlFor={`todo-${id}`} className="todo__status-label">
