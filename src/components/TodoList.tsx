@@ -103,15 +103,17 @@ export const TodoList: React.FC<Props> = ({
             </button>
           )}
 
-          <div
-            data-cy="TodoLoader"
-            className={classNames('modal overlay', {
-              'is-active': isSubmitting,
-            })}
-          >
-            <div className="modal-background has-background-white-ter" />
+          {isSubmitting &&
+            <div
+              data-cy="TodoLoader"
+              className="modal overlay is-active"
+            >
+
+
+            < div className = "modal-background has-background-white-ter" />
             <div className="loader" />
           </div>
+          }
         </div>
       ))}
     </div>

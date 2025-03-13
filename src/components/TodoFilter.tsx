@@ -11,6 +11,7 @@ type Props = {
   handleCheckedChange: (todoId: number) => void;
   isChecked: boolean;
   notCompletedTodosLength: number;
+
 };
 
 export const TodoFilter: React.FC<Props> = ({
@@ -46,7 +47,7 @@ export const TodoFilter: React.FC<Props> = ({
         {Object.values(TodoStatus).map(statusOption => (
           <a
             key={statusOption}
-            href={`#/${statusOption.toLowerCase()}`}
+            //href={`#/${statusOption.toLowerCase()}`}
             className={classNames('filter__link', {
               selected: status === statusOption,
             })}

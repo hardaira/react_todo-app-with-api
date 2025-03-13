@@ -39,68 +39,89 @@ export const App: React.FC = () => {
     setIsChecked(false);
   };
 
-  const handleTickPressed = () => {
-    const allCompleted = !tickPressed;
+ const handleTickPressed = () => {
+   const allCompleted = !tickPressed;
 
-    const updatedTodos = todos.map(todo => ({
-      ...todo,
-      completed: allCompleted,
-      isSubmitting: true,
-    }));
+   const previousTodos = [...todos];
+   const previousTickPressed = tickPressed;
 
-    setTodos(updatedTodos);
-    setTickPressed(allCompleted);
+   const updatedTodos = todos.map(todo => ({
+     ...todo,
+     completed: allCompleted,
+     isSubmitting: true,
+   }));
 
-    updatedTodos.forEach(updatedTodo => {
-      updateTodo(updatedTodo)
-        .catch(() => {
-          setErrorMessage('Unable to update todos');
-          setTimeout(() => {
-            setErrorMessage('');
-          }, 3000);
-        })
-        .finally(() => {
-          setTodos(prevTodos =>
-            prevTodos.map(t =>
-              t.id === updatedTodo.id
-                ? { ...updatedTodo, isSubmitting: false }
-                : t,
-            ),
-          );
-        });
-    });
-  };
+   setTodos(updatedTodos);
+   setTickPressed(allCompleted);
 
-  const handleCheckedChange = (todoId: number) => {
-    const todo = todos.find(t => t.id === todoId);
+   const updatePromises = updatedTodos.map(updatedTodo =>
+     updateTodo(updatedTodo).catch(() => {
+       setErrorMessage('Unable to update todos');
+       setTimeout(() => {
+         setErrorMessage('');
+       }, 3000);
 
-    if (!todo) {
-      return;
-    }
+       setTodos(previousTodos);
+       setTickPressed(previousTickPressed);
 
-    const updatedTodo = { ...todo, completed: !todo.completed };
+       throw new Error('Unable to update todos');
+     }),
+   );
 
-    setTodos(currentTodos =>
-      currentTodos.map(t =>
-        t.id === todoId ? { ...updatedTodo, isSubmitting: true } : t,
-      ),
-    );
+   Promise.all(updatePromises).finally(() => {
+     setTodos(prevTodos =>
+       prevTodos.map(t =>
+         updatedTodos.find(updatedTodo => updatedTodo.id === t.id)
+           ? { ...t, isSubmitting: false }
+           : t,
+       ),
+     );
+   });
+ };
 
-    updateTodo(updatedTodo)
-      .catch(() => {
-        setErrorMessage('Unable to update a todo');
-        setTimeout(() => {
-          setErrorMessage('');
-        }, 3000);
-      })
-      .finally(() => {
-        setTodos(currentTodos =>
-          currentTodos.map(t =>
-            t.id === todoId ? { ...updatedTodo, isSubmitting: false } : t,
-          ),
-        );
-      });
-  };
+
+ const handleCheckedChange = (todoId: number) => {
+
+   const todo = todos.find(t => t.id === todoId);
+
+   if (!todo) {
+     return;
+   }
+
+   const previousTodo = { ...todo };
+
+   const updatedTodo = {
+     ...todo,
+     completed: !todo.completed,
+     isSubmitting: true,
+   };
+
+   setTodos(currentTodos =>
+     currentTodos.map(t => (t.id === todoId ? updatedTodo : t)),
+   );
+
+   updateTodo(updatedTodo)
+     .catch(() => {
+       setErrorMessage('Unable to update a todo');
+       setTimeout(() => {
+         setErrorMessage('');
+       }, 3000);
+
+       setTodos(currentTodos =>
+         currentTodos.map(t => (t.id === todoId ? previousTodo : t)),
+       );
+
+       throw new Error('Unable to update a todo');
+     })
+     .finally(() => {
+       setTodos(prevTodos =>
+         prevTodos.map(t =>
+           t.id === todoId ? { ...t, isSubmitting: false } : t,
+         ),
+       );
+     });
+ };
+
 
   const deleteThisTodo = (todoId: number) => {
     setTodos(currentTodos =>
